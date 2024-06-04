@@ -62,4 +62,11 @@ def order(order_id):
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
+        order1 = Order(table_number=1, items='Item 1, Item 2', status='new')
+        order2 = Order(table_number=2, items='Item 3, Item 4', status='new')
+
+        db.session.add(order1)
+        db.session.add(order2)
+        db.session.commit()
+
     app.run()
