@@ -5,8 +5,26 @@
     <title>Admin</title>
 </head>
 <body>
+
     {% if message %}
         <p>{{ message }}</p>
     {% endif %}
+
+    <p>Назначение роли пользователю:</p>
+
+    <form action="" method="post">
+        <p>
+	    <label for="username">Username</label>
+	    <input type="text" name="username">
+	</p>
+	<p>
+	    <label for="role">Role</label>
+	    <input type="number" name="role">
+	</p>
+	<p>
+	    <input type="submit">
+	</p>
+    </form>
+
 </body>
 </html>
