@@ -1,6 +1,6 @@
 import sqlite3
 
-connection = sqlite3.connect("databases/menu.db")
+connection = sqlite3.connect("menu/menu.db")
 cursor = connection.cursor()
 cursor.execute('SELECT * FROM Categories')
 category = cursor.fetchall()
