@@ -1,3 +1,5 @@
+import json
+
 from flask import Flask, request, jsonify, render_template, url_for, redirect
 import sqlite3
 import hashlib
@@ -32,14 +34,14 @@ def register():
         user = c.fetchone()
         if user:
             message = "The user with the same name exists. Try to come up with another name."
-            return render_template('login.html', message=message)
+            return jsonify(message)
         else:
             c.execute("INSERT INTO users (username, password) VALUES (?, ?)", (username, hashed_password))
             conn.commit()
             conn.close()
             return redirect(url_for('login'))
     else:
-        return render_template('register.html', message='Registration')
+        return jsonify('Registration')
 
 
 # Авторизация пользователя
@@ -69,9 +71,9 @@ def login():
                 return redirect(url_for('none'))
         else:
             message = "Wrong username or password"
-            return render_template('login.html', message=message)
+            return jsonify(message)
     else:
-        return render_template('login.html', message='Log in')
+        return jsonify('Log in')
 
 
 @app.route('/admin/', methods=['GET', 'POST'])
@@ -88,7 +90,7 @@ def admin():
         curs = cursor.fetchone()
         if curs:
             cursor.close()
-            return render_template('admin.html', message='This person already had a role.')
+            return jsonify('This person already had a role.')
         else:
             curr_request = 'SELECT max(Id) FROM UsersRoles'
             cursor.execute(curr_request)
@@ -96,19 +98,19 @@ def admin():
             cursor.execute("INSERT INTO UsersRoles (Id, Username, RoleId) VALUES (?, ?, ?)", (id + 1, username, role))
             connection.commit()
             connection.close()
-            return render_template('admin.html', message='Successfully add a role.')
+            return jsonify('Successfully add a role.')
     else:
-        return render_template('admin.html', message='Succesfully logged in, administrator! :)')
+        return jsonify('Succesfully logged in, administrator! :)')
 
 
 @app.route('/waiter/', methods=['GET'])
 def waiter():
-    return render_template('waiter.html', message='Succesfully logged in, waiter! :)')
+    return jsonify('Succesfully logged in, waiter! :)')
 
 
 @app.route('/none/', methods=['GET'])
 def none():
-    return render_template('none.html', message="You don't have permission :(")
+    return jsonify("You don't have permission :(")
 
 
 if __name__ == '__main__':

@@ -11,18 +11,57 @@ MENU_SERVICE_URL = 'http://localhost:5003'
 PAYMENT_SERVICE_URL = 'http://localhost:5004'
 
 # Маршрутизация запросов к сервису аутентификации
-@app.post("/auth/login")
-async def login(request: Request):
+@app.get("/register")
+async def get_register(request: Request):
+    response = requests.post(f'{AUTHENTICATION_SERVICE_URL}/register')
+    if response.status_code != 200:
+        raise HTTPException(status_code=response.status_code, detail=response.json())
+    return JSONResponse(content=response.json())
+@app.post("/register")
+async def post_register(request: Request):
+    payload = await request.json()
+    response = requests.post(f'{AUTHENTICATION_SERVICE_URL}/register', json=payload)
+    if response.status_code != 200:
+        raise HTTPException(status_code=response.status_code, detail=response.json())
+    return JSONResponse(content=response.json())
+@app.post("/login")
+async def post_login(request: Request):
     payload = await request.json()
     response = requests.post(f'{AUTHENTICATION_SERVICE_URL}/login', json=payload)
     if response.status_code != 200:
         raise HTTPException(status_code=response.status_code, detail=response.json())
     return JSONResponse(content=response.json())
+@app.get("/login")
+async def get_login(request: Request):
+    response = requests.get(f'{AUTHENTICATION_SERVICE_URL}/login')
+    if response.status_code != 200:
+        raise HTTPException(status_code=response.status_code, detail=response.json())
+    return JSONResponse(content=response.json())
 
-@app.post("/auth/register")
-async def register(request: Request):
+@app.post("/admin")
+async def post_admin(request: Request):
     payload = await request.json()
-    response = requests.post(f'{AUTHENTICATION_SERVICE_URL}/register', json=payload)
+    response = requests.post(f'{AUTHENTICATION_SERVICE_URL}/admin', json=payload)
+    if response.status_code != 200:
+        raise HTTPException(status_code=response.status_code, detail=response.json())
+    return JSONResponse(content=response.json())
+@app.get("/admin")
+async def get_admin(request: Request):
+    response = requests.get(f'{AUTHENTICATION_SERVICE_URL}/admin')
+    if response.status_code != 200:
+        raise HTTPException(status_code=response.status_code, detail=response.json())
+    return JSONResponse(content=response.json())
+
+@app.get("/waiter")
+async def get_none(request: Request):
+    response = requests.get(f'{AUTHENTICATION_SERVICE_URL}/waiter/')
+    if response.status_code != 200:
+        raise HTTPException(status_code=response.status_code, detail=response.json())
+    return JSONResponse(content=response.json())
+
+@app.get("/none")
+async def get_none(request: Request):
+    response = requests.get(f'{AUTHENTICATION_SERVICE_URL}/none/')
     if response.status_code != 200:
         raise HTTPException(status_code=response.status_code, detail=response.json())
     return JSONResponse(content=response.json())
