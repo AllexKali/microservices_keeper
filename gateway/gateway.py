@@ -1,6 +1,8 @@
 from fastapi import FastAPI, Request, HTTPException
+from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 import requests
+from pydantic import BaseModel
 
 app = FastAPI()
 
@@ -17,16 +19,21 @@ async def get_register(request: Request):
     if response.status_code != 200:
         raise HTTPException(status_code=response.status_code, detail=response.json())
     return JSONResponse(content=response.json())
+
+class LodData(BaseModel):
+    username: str
+    password: str
 @app.post("/register")
-async def post_register(request: Request):
-    payload = await request.json()
+async def post_register(lodData: LodData):
+    payload = jsonable_encoder(lodData)
     response = requests.post(f'{AUTHENTICATION_SERVICE_URL}/register', json=payload)
     if response.status_code != 200:
         raise HTTPException(status_code=response.status_code, detail=response.json())
     return JSONResponse(content=response.json())
+
 @app.post("/login")
-async def post_login(request: Request):
-    payload = await request.json()
+async def post_login(lodData: LodData):
+    payload = jsonable_encoder(lodData)
     response = requests.post(f'{AUTHENTICATION_SERVICE_URL}/login', json=payload)
     if response.status_code != 200:
         raise HTTPException(status_code=response.status_code, detail=response.json())
@@ -38,9 +45,12 @@ async def get_login(request: Request):
         raise HTTPException(status_code=response.status_code, detail=response.json())
     return JSONResponse(content=response.json())
 
+class Admin(BaseModel):
+    username: str
+    role: str
 @app.post("/admin")
-async def post_admin(request: Request):
-    payload = await request.json()
+async def post_admin(admin: Admin):
+    payload = jsonable_encoder(admin)
     response = requests.post(f'{AUTHENTICATION_SERVICE_URL}/admin', json=payload)
     if response.status_code != 200:
         raise HTTPException(status_code=response.status_code, detail=response.json())
@@ -74,9 +84,14 @@ async def get_orders():
         raise HTTPException(status_code=response.status_code, detail=response.json())
     return JSONResponse(content=response.json())
 
+class Order(BaseModel):
+    table_number: int
+    items: str
+    status: str
+
 @app.post("/orders")
-async def create_order(request: Request):
-    payload = await request.json()
+async def create_order(order: Order):
+    payload = jsonable_encoder(order)
     response = requests.post(f'{ORDERS_SERVICE_URL}/orders', json=payload)
     if response.status_code != 200:
         raise HTTPException(status_code=response.status_code, detail=response.json())
@@ -90,8 +105,8 @@ async def get_order(order_id: int):
     return JSONResponse(content=response.json())
 
 @app.put("/orders/{order_id}")
-async def update_order(order_id: int, request: Request):
-    payload = await request.json()
+async def update_order(order_id: int, order: Order):
+    payload = jsonable_encoder(order)
     response = requests.put(f'{ORDERS_SERVICE_URL}/orders/{order_id}', json=payload)
     if response.status_code != 200:
         raise HTTPException(status_code=response.status_code, detail=response.json())
@@ -112,9 +127,14 @@ async def get_menu():
         raise HTTPException(status_code=response.status_code, detail=response.json())
     return JSONResponse(content=response.json())
 
+class MenuItem(BaseModel):
+    Category_id: int
+    Name: str
+    # 'Weight/Volume': float
+    Cost: float
 @app.post("/menu")
-async def create_menu_item(request: Request):
-    payload = await request.json()
+async def create_menu_item(menuItem: MenuItem):
+    payload = jsonable_encoder(menuItem)
     response = requests.post(f'{MENU_SERVICE_URL}/menu', json=payload)
     if response.status_code != 200:
         raise HTTPException(status_code=response.status_code, detail=response.json())
@@ -128,8 +148,8 @@ async def get_menu_item(item_id: int):
     return JSONResponse(content=response.json())
 
 @app.put("/menu/{item_id}")
-async def update_menu_item(item_id: int, request: Request):
-    payload = await request.json()
+async def update_menu_item(item_id: int, menuItem: MenuItem):
+    payload = jsonable_encoder(menuItem)
     response = requests.put(f'{MENU_SERVICE_URL}/menu/{item_id}', json=payload)
     if response.status_code != 200:
         raise HTTPException(status_code=response.status_code, detail=response.json())
@@ -143,9 +163,13 @@ async def delete_menu_item(item_id: int):
     return JSONResponse(content=response.json())
 
 # Маршрутизация запросов к сервису платежей
+
+class Transactions(BaseModel):
+    amount: float
 @app.post("/transactions")
-async def create_transaction(request: Request):
-    payload = await request.json()
+async def create_transaction(transactions: Transactions):
+    payload = jsonable_encoder(transactions)
+    # print(payload)
     response = requests.post(f'{PAYMENT_SERVICE_URL}/transactions', json=payload)
     if response.status_code != 200:
         raise HTTPException(status_code=response.status_code, detail=response.json())

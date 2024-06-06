@@ -1,5 +1,3 @@
-import json
-
 from flask import Flask, request, jsonify, render_template, url_for, redirect
 import sqlite3
 import hashlib
@@ -22,8 +20,8 @@ def get_role(username):
 def register():
     if request.method == 'POST':
         print(request.form)
-        username = request.form.get('username')
-        password = request.form.get('password')
+        username = request.json.get('username')
+        password = request.json.get('password')
 
         conn = sqlite3.connect('users.db')
         c = conn.cursor()
@@ -50,8 +48,8 @@ def login():
     message = ''
     if request.method == 'POST':
         print(request.form)
-        username = request.form.get('username')
-        password = request.form.get('password')
+        username = request.json.get('username')
+        password = request.json.get('password')
 
         conn = sqlite3.connect('users.db')
         c = conn.cursor()
@@ -80,8 +78,8 @@ def login():
 def admin():
     if request.method == 'POST':
         print(request.form)
-        username = request.form.get('username')
-        role = request.form.get('role')
+        username = request.json.get('username')
+        role = request.json.get('role')
 
         connection = sqlite3.connect("roles.db")
         cursor = connection.cursor()
@@ -114,4 +112,4 @@ def none():
 
 
 if __name__ == '__main__':
-    app.run(port=5001)
+    app.run(port=5001, debug=True)
