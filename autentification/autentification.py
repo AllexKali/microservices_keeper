@@ -16,7 +16,7 @@ def get_role(username):
 
 
 # Регистрация пользователя
-@app.route('/register/', methods=['POST', 'get'])
+@app.route('/register/', methods=['POST', 'GET'])
 def register():
     if request.method == 'POST':
         print(request.form)
@@ -33,17 +33,20 @@ def register():
         if user:
             message = "The user with the same name exists. Try to come up with another name."
             return jsonify(message)
+            # return render_template('login.html', message=message)
         else:
             c.execute("INSERT INTO users (username, password) VALUES (?, ?)", (username, hashed_password))
             conn.commit()
             conn.close()
-            return redirect(url_for('login'))
+            # return redirect(url_for('login'))
+            return jsonify("Redirection to 'login'")
     else:
+        # return render_template('register.html', message='Registration')
         return jsonify('Registration')
 
 
 # Авторизация пользователя
-@app.route('/login/', methods=['post', 'get'])
+@app.route('/login/', methods=['POST', 'GET'])
 def login():
     message = ''
     if request.method == 'POST':
@@ -62,16 +65,21 @@ def login():
             role = get_role(username)
             if role:
                 if role[0] == 'Admin':
-                    return redirect(url_for('admin'))
+                    return jsonify("Redirection to 'Admin'")
+                    # return redirect(url_for('admin'))
                 elif role[0] == 'Waiter':
-                    return redirect(url_for('waiter'))
+                    return jsonify("Redirection to 'Waiter'")
+                    # return redirect(url_for('waiter'))
             else:
-                return redirect(url_for('none'))
+                return jsonify("Redirection to 'None'")
+                # return redirect(url_for('none'))
         else:
             message = "Wrong username or password"
+            # return render_template('login.html', message=message)
             return jsonify(message)
     else:
         return jsonify('Log in')
+        # return render_template('login.html', message='Log in')
 
 
 @app.route('/admin/', methods=['GET', 'POST'])
@@ -88,6 +96,7 @@ def admin():
         curs = cursor.fetchone()
         if curs:
             cursor.close()
+            # return render_template('admin.html', message='This person already had a role.')
             return jsonify('This person already had a role.')
         else:
             curr_request = 'SELECT max(Id) FROM UsersRoles'
@@ -96,18 +105,22 @@ def admin():
             cursor.execute("INSERT INTO UsersRoles (Id, Username, RoleId) VALUES (?, ?, ?)", (id + 1, username, role))
             connection.commit()
             connection.close()
+            # return render_template('admin.html', message='Successfully add a role.')
             return jsonify('Successfully add a role.')
     else:
+        # return render_template('admin.html', message='Succesfully logged in, administrator! :)')
         return jsonify('Succesfully logged in, administrator! :)')
 
 
 @app.route('/waiter/', methods=['GET'])
 def waiter():
+    # return render_template('waiter.html', message='Succesfully logged in, waiter! :)')
     return jsonify('Succesfully logged in, waiter! :)')
 
 
 @app.route('/none/', methods=['GET'])
 def none():
+    # return render_template('none.html', message="You don't have permission :(")
     return jsonify("You don't have permission :(")
 
 
