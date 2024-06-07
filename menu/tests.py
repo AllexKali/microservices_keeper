@@ -11,7 +11,7 @@ def test_get_menu():
 
 
 def test_add_dish():
-    new_dish = {'Name': 'Cocacol', 'Weight/Volume': 200.0, 'Cost': 350, 'Category_id': 1}
+    new_dish = {'Name': 'Cocacol', 'Weight_or_Volume': 200.0, 'Cost': 350, 'Category_id': 1}
     response = requests.post('http://127.0.0.1:5000/menu', json=new_dish)
     assert response.status_code == 200
     assert response.json() == {"message": "Dish added successfully"}

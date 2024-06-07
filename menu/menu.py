@@ -53,6 +53,7 @@ def get_menu():
 @app.route('/menu', methods=['POST'])
 def add_dish():
     data = request.get_json()
+    print(data)
     connection = sqlite3.connect("menu.db")
     cursor = connection.cursor()
     curr_request = 'SELECT max(Id) FROM ' + str(food[data["Category_id"]-1])
@@ -67,7 +68,7 @@ def add_dish():
     cursor.execute(curr_request)
     connection.commit()
     connection.close()
-    return jsonify({"message": "Dish added successfully"})
+    return jsonify({"message": "Dish added successfully"}), 201
 
 
 # Удаление блюда из меню
@@ -82,7 +83,7 @@ def delete_dish(dish_id_category):
     cursor.execute(curr_request)
     connection.commit()
     connection.close()
-    return jsonify({"message": "Dish deleted successfully"})
+    return jsonify({"message": "Dish deleted successfully"}), 200
 
 
 # Обновление блюда в меню
@@ -109,3 +110,5 @@ def update_dish(dish_id):
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=5003)
+    # app.run(port=5003)
+

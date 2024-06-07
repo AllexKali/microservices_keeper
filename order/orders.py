@@ -32,7 +32,7 @@ def orders():
         db.session.add(order)
         db.session.commit()
 
-        return '', 201
+        return jsonify({"message": "Order added successfully"}), 201
 
 @app.route('/orders/<int:order_id>', methods=['GET', 'PUT', 'DELETE'])
 def order(order_id):
@@ -50,14 +50,14 @@ def order(order_id):
 
         db.session.commit()
 
-        return '', 200
+        return jsonify({"message": "Order updated successfully"}), 200
     elif request.method == 'DELETE':
         order = Order.query.get(order_id)
 
         db.session.delete(order)
         db.session.commit()
 
-        return '', 204
+        return jsonify({"message": "Order deleted successfully"}), 200
 
 if __name__ == '__main__':
     with app.app_context():

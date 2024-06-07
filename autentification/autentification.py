@@ -42,7 +42,7 @@ def register():
             return jsonify("Redirection to 'login'")
     else:
         # return render_template('register.html', message='Registration')
-        return jsonify('Registration')
+        return jsonify({"message": "Registration"})
 
 
 # Авторизация пользователя

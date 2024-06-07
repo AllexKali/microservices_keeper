@@ -11,6 +11,10 @@ AUTHENTICATION_SERVICE_URL = 'http://authentication:5001'
 ORDERS_SERVICE_URL = 'http://orders:5002'
 MENU_SERVICE_URL = 'http://menu:5003'
 PAYMENT_SERVICE_URL = 'http://transactions:5004'
+# AUTHENTICATION_SERVICE_URL = 'http://authentication:5001'
+# ORDERS_SERVICE_URL = 'http://orders:5002'
+# MENU_SERVICE_URL = 'http://localhost:5003'
+# PAYMENT_SERVICE_URL = 'http://transactions:5004'
 @app.get("/")
 async def root():
     return {"message": "Hello World"}
@@ -18,8 +22,8 @@ async def root():
 
 # Маршрутизация запросов к сервису аутентификации
 @app.get("/register")
-async def get_register(request: Request):
-    response = requests.post(f'{AUTHENTICATION_SERVICE_URL}/register')
+async def get_register():
+    response = requests.get(f'{AUTHENTICATION_SERVICE_URL}/register')
     if response.status_code != 200:
         raise HTTPException(status_code=response.status_code, detail=response.json())
     return JSONResponse(content=response.json())
@@ -43,7 +47,7 @@ async def post_login(lodData: LodData):
         raise HTTPException(status_code=response.status_code, detail=response.json())
     return JSONResponse(content=response.json())
 @app.get("/login")
-async def get_login(request: Request):
+async def get_login():
     response = requests.get(f'{AUTHENTICATION_SERVICE_URL}/login')
     if response.status_code != 200:
         raise HTTPException(status_code=response.status_code, detail=response.json())
@@ -51,7 +55,7 @@ async def get_login(request: Request):
 
 class Admin(BaseModel):
     username: str
-    role: str
+    role: int
 @app.post("/admin")
 async def post_admin(admin: Admin):
     payload = jsonable_encoder(admin)
@@ -134,19 +138,13 @@ async def get_menu():
 class MenuItem(BaseModel):
     Category_id: int
     Name: str
-    # 'Weight/Volume': float
-    Cost: float
+    Weight: float
+    Cost: int
+    Amount: int
 @app.post("/menu")
 async def create_menu_item(menuItem: MenuItem):
     payload = jsonable_encoder(menuItem)
     response = requests.post(f'{MENU_SERVICE_URL}/menu', json=payload)
-    if response.status_code != 200:
-        raise HTTPException(status_code=response.status_code, detail=response.json())
-    return JSONResponse(content=response.json())
-
-@app.get("/menu/{item_id}")
-async def get_menu_item(item_id: int):
-    response = requests.get(f'{MENU_SERVICE_URL}/menu/{item_id}')
     if response.status_code != 200:
         raise HTTPException(status_code=response.status_code, detail=response.json())
     return JSONResponse(content=response.json())
@@ -160,7 +158,7 @@ async def update_menu_item(item_id: int, menuItem: MenuItem):
     return JSONResponse(content=response.json())
 
 @app.delete("/menu/{item_id}")
-async def delete_menu_item(item_id: int):
+async def delete_menu_item(item_id: str):
     response = requests.delete(f'{MENU_SERVICE_URL}/menu/{item_id}')
     if response.status_code != 200:
         raise HTTPException(status_code=response.status_code, detail=response.json())
@@ -189,3 +187,4 @@ async def get_transactions():
 if __name__ == '__main__':
     import uvicorn
     uvicorn.run(app, host="0.0.0.0",  port=5000)
+    # uvicorn.run(app, port=5000)
