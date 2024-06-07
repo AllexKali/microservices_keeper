@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  authentication:
+    build:
+      context: ./autentification
+    ports:
+      - "5001:5001"
+    environment:
+      - FLASK_ENV=development
+
+  orders:
+    build:
+      context: ./order
+    ports:
+      - "5002:5002"
+    environment:
+      - FLASK_ENV=development
+
+  menu:
+    build:
+      context: ./menu
+    ports:
+      - "5003:5003"
+    environment:
+      - FLASK_ENV=development
+
+  transactions:
+    build:
+      context: ./finance
+    ports:
+      - "5004:5004"
+    environment:
+      - FLASK_ENV=development
+
+  gateway:
+    build:
+      context: ./gateway
+    ports:
+      - "5000:5000"
+    depends_on:
+      - authentication
+      - orders
+      - menu
+      - transactions

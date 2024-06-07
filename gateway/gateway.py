@@ -7,10 +7,14 @@ from pydantic import BaseModel
 app = FastAPI()
 
 # Конфигурация URL микросервисов
-AUTHENTICATION_SERVICE_URL = 'http://localhost:5001'
-ORDERS_SERVICE_URL = 'http://localhost:5002'
-MENU_SERVICE_URL = 'http://localhost:5003'
-PAYMENT_SERVICE_URL = 'http://localhost:5004'
+AUTHENTICATION_SERVICE_URL = 'http://authentication:5001'
+ORDERS_SERVICE_URL = 'http://orders:5002'
+MENU_SERVICE_URL = 'http://menu:5003'
+PAYMENT_SERVICE_URL = 'http://transactions:5004'
+@app.get("/")
+async def root():
+    return {"message": "Hello World"}
+
 
 # Маршрутизация запросов к сервису аутентификации
 @app.get("/register")
@@ -184,4 +188,4 @@ async def get_transactions():
 
 if __name__ == '__main__':
     import uvicorn
-    uvicorn.run(app, port=5000)
+    uvicorn.run(app, host="0.0.0.0",  port=5000)
